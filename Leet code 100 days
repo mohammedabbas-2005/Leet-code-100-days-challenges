@@ -421,3 +421,37 @@ public:
         return (reduce(nums.begin(), nums.end(), 0)&1)?0:nums.size()-1;
     }
 };
+
+Day 10:
+You are given an integer array nums and an integer k. Your task is to partition nums into one or more non-empty contiguous segments such that in each segment, the difference between its maximum and minimum elements is at most k.
+
+Return the total number of ways to partition nums under this condition.
+
+Since the answer may be too large, return it modulo
+
+Solution:
+class Solution {
+public:
+    static int countPartitions(vector<int>& nums, int k) {
+        const int n=nums.size();
+        constexpr int mod=1e9+7;
+        multiset<int> win;
+        long long cnt=0;
+        int* sum=(int*)alloca((n+2)*sizeof(int));
+        memset(sum, 0, sizeof(sum));
+        sum[1]=1;
+    
+        for(int l=0, r=0; r<n; r++){
+            const int x=nums[r];
+            win.insert(x);
+            while(*(prev(win.end()))-*win.begin()>k){
+                auto it=win.lower_bound(nums[l++]);
+                win.erase(it);
+            }
+            cnt=(mod+sum[r+1]-sum[l])%mod;
+            sum[r+2]=(sum[r+1]+cnt)%mod;
+            
+        }
+        return cnt;
+    }
+};
